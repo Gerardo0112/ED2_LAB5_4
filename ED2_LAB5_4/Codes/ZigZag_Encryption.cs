@@ -35,5 +35,72 @@ namespace ED2_LAB5_4.Codes
             }
             return list;
         }
+        //Crear matriz.
+        public byte[,] matrix(int counter, int level, ref int caracter)
+        {
+            caracter = counter;
+            var array = new byte[level, counter];
+            var return_ = false;
+            var x = 0;
+            for(int y = 0; y < counter; y++)
+            {
+                if(return_)
+                {
+                    //Convertir en byte.
+                    array[x, y] = Convert.ToByte('_');
+                    x--;
+                    if (x < 0)
+                    {
+                        return_ = false;
+                        x += 2;
+                    }
+                }
+                else
+                {
+                    array[x, y] = Convert.ToByte('_');
+                    x++;
+                    if (x == level)
+                    {
+                        return_ = true;
+                        x -= 2;
+                    }
+                }
+            }
+            //Si convierte a byte, que devuelva el array.
+            if (array[0, counter - 1] == Convert.ToByte('_'))
+            {
+                return array;
+            }
+            else
+            {
+                array = matrix(counter + 1, level, ref caracter);
+            }
+            return array;
+        }
+        //Añadir cualquier tipo de caracter extra.
+        public List<byte> add_extra_c(List<byte> list, int counter, ref byte extra_c)
+        {
+            bool found = true;
+            var x = 1;
+            while(!found)
+            {
+                if(list.Contains(Convert.ToByte(x)))
+                {
+                    x++;
+                }
+                else
+                {
+                    //Encuentra el valor.
+                    found = true;
+                }
+            }
+            extra_c = Convert.ToByte(x);
+            while(list.Count() != counter)
+            {
+                //Se añade al listado.
+                list.Add(Convert.ToByte(x));
+            }
+            return list;
+        }
     }
 }
