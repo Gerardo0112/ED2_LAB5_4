@@ -109,6 +109,60 @@ namespace ED2_LAB5_4.Codes
                 }
             }
         }
-
+        //Obtener el archivo cifrado.
+        public void original_text(string lecture)
+        {
+            var length = 10000;
+            using (var stream = new FileStream(lecture, FileMode.Open))
+            {
+                using (var reading = new BinaryReader(stream))
+                {
+                    var bytes = new byte[length];
+                    //Utilizar para nueva lectura indirectamente.
+                    while (reading.BaseStream.Position != reading.BaseStream.Length)
+                    {
+                        bytes = reading.ReadBytes(length);
+                        text_encryption(bytes);
+                    }
+                }
+            }
+        }
+        //Obtener el archivo descifrado.
+        public void decrypted_text(string lecture)
+        {
+            var length = 10000;
+            var text = string.Empty;
+            using (var stream = new FileStream(lecture, FileMode.Open))
+            {
+                using (var reading = new BinaryReader(stream))
+                {
+                    var bytes = new byte[length];
+                    //Utilizar para nueva lectura indirectamente para la nueva escritura.
+                    while (reading.BaseStream.Position != reading.BaseStream.Length)
+                    {
+                        bytes = reading.ReadBytes(length);
+                        text_decryption(bytes);
+                    }
+                }
+            }
+        }
+        //Cifrar mensaje.
+        public void message(string route_a, string lecture, string key)
+        {
+            route = route_a;
+            original_generate();
+            encryption_generate(key);
+            original_text(lecture);
+            encryption.Clear();
+        }
+        //Descifrar mensaje.
+        public void message_d(string route_a, string lecture, string key)
+        {
+            route = route_a;
+            original_generate();
+            encryption_generate(key);
+            decrypted_text(lecture);
+            encryption.Clear();
+        }
     }
 }
