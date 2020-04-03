@@ -14,18 +14,18 @@ namespace ED2_LAB5_4.Codes
         {
             //Lista para bytes.
             var list = new List<byte>();
-            using(var stream = new FileStream(file, FileMode.Open))
+            using (var stream = new FileStream(file, FileMode.Open))
             {
                 //Lectura.
-                using(var reading = new BinaryReader(stream))
+                using (var reading = new BinaryReader(stream))
                 {
                     //Almacenamiento.
                     var bytes = new byte[length];
-                    while(reading.BaseStream.Position != reading.BaseStream.Length)
+                    while (reading.BaseStream.Position != reading.BaseStream.Length)
                     {
                         //Lee los bytes.
                         bytes = reading.ReadBytes(length);
-                        foreach(byte bit in bytes)
+                        foreach (byte bit in bytes)
                         {
                             //Agregando a la lista.
                             list.Add(bit);
@@ -42,9 +42,9 @@ namespace ED2_LAB5_4.Codes
             var array = new byte[level, counter];
             var return_ = false;
             var x = 0;
-            for(int y = 0; y < counter; y++)
+            for (int y = 0; y < counter; y++)
             {
-                if(return_)
+                if (return_)
                 {
                     //Convertir en byte.
                     array[x, y] = Convert.ToByte('_');
@@ -82,9 +82,9 @@ namespace ED2_LAB5_4.Codes
         {
             bool found = true;
             var x = 1;
-            while(!found)
+            while (!found)
             {
-                if(list.Contains(Convert.ToByte(x)))
+                if (list.Contains(Convert.ToByte(x)))
                 {
                     x++;
                 }
@@ -95,12 +95,68 @@ namespace ED2_LAB5_4.Codes
                 }
             }
             extra_c = Convert.ToByte(x);
-            while(list.Count() != counter)
+            while (list.Count() != counter)
             {
                 //Se añade al listado.
                 list.Add(Convert.ToByte(x));
             }
             return list;
         }
+        public void message(byte[,] array, int level, string route, List<byte> list, byte extra_c)
+        {
+            //Introduce los bytes.
+            var list_position = 0;
+            var return_ = false;
+            var x = 0;
+            for (int y = 0; y < list.Count(); y++)
+            {
+                if (return_)
+                {
+                    array[x, y] = list[list_position];
+                    list_position++;
+                    x--;
+                    if (x < 0)
+                    {
+                        return_ = false;
+                        x += 2;
+                    }
+                }
+                else
+                {
+                    array[x, y] = list[list_position];
+                    list_position++;
+                    x++;
+                    if (x == level)
+                    {
+                        return_ = true;
+                        x -= 2;
+                    }
+                }
+            }
+            //Obtiene los bytes cifrados.
+            var bytes = new byte[list.Count()];
+            var position = 0;
+            for (x = 0; x < level; x++)
+            {
+                for (int y = 0; y < list.Count(); y++)
+                {
+                    if (array[x, y] != 0)
+                    {
+                        bytes[position] = array[x, y];
+                        position++;
+                    }
+                }
+            }
+            using (var stream = new FileStream(route + "\\..\\Files\\ArchivoCifradoZigZag.cif", FileMode.Create))
+            {
+                using (var writing = new BinaryWriter(stream))
+                {
+                    writing.Write(extra_c);
+                    writing.Seek(0, SeekOrigin.End);
+                    writing.Write(bytes);
+                }
+            }
+        }
+
     }
 }
