@@ -101,7 +101,7 @@ namespace ED2_LAB5_4.Codes
                 }
                 text += decryption_value;
             }
-            using (var write = new FileStream(route + "\\..\\Files\\archivoDecifradoCesar.txt", FileMode.OpenOrCreate))
+            using (var write = new FileStream(route + "\\..\\Files\\archivoDescifradoCesar.txt", FileMode.OpenOrCreate))
             {
                 using(var writing = new BinaryWriter(write))
                 {
