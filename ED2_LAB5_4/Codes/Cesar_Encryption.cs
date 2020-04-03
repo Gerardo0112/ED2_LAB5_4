@@ -58,5 +58,57 @@ namespace ED2_LAB5_4.Codes
                 }
             }
         }
+        //Cifrar texto.
+        public void text_encryption(byte[] bytes)
+        {
+            var text = string.Empty;
+            foreach(char letter in bytes)
+            {
+                //Convertir los caracteres
+                var original_value = original.LastOrDefault(x => x.Key == Convert.ToString(letter)).Value;
+                var encryption_value = encryption.LastOrDefault(x => x.Value == original_value).Key;
+                if(original_value == 0)
+                {
+                    encryption_value = Convert.ToString(letter);
+                }
+                text += encryption_value;
+            }
+            using (var write = new FileStream(route + "\\..\\Files\\archivoCifradoCesar.cif", FileMode.OpenOrCreate))
+            {
+                using(var writing = new BinaryWriter(write))
+                {
+                    writing.Seek(0, SeekOrigin.End);
+                    writing.Write(System.Text.Encoding.Unicode.GetBytes(text));
+                }
+            }
+        }
+        //Descifrar texto.
+        private void text_decryption(byte[] bytes)
+        {
+            var text = string.Empty;
+            foreach (char letter in bytes)
+            {
+                //Conversión de caracteres.
+                var encryption_value = encryption.LastOrDefault(x => x.Key == Convert.ToString(letter)).Value;
+                var decryption_value = original.LastOrDefault(x => x.Value == encryption_value).Key;
+                if(decryption_value == "\0")
+                {
+                    decryption_value = Convert.ToString(letter);
+                }
+                if(decryption_value == "\r")
+                {
+                    decryption_value = original.LastOrDefault(x => x.Value == encryption_value).Key;
+                }
+                text += decryption_value;
+            }
+            using (var write = new FileStream(route + "\\..\\Files\\archivoDecifradoCesar.txt", FileMode.OpenOrCreate))
+            {
+                using(var writing = new BinaryWriter(write))
+                {
+                    writing.Write(System.Text.Encoding.Unicode.GetBytes(text));
+                }
+            }
+        }
+
     }
 }
