@@ -102,6 +102,7 @@ namespace ED2_LAB5_4.Codes
             }
             return list;
         }
+        //Cifrar mensaje.
         public void message(byte[,] array, int level, string route, List<byte> list, byte extra_c)
         {
             //Introduce los bytes.
@@ -235,6 +236,98 @@ namespace ED2_LAB5_4.Codes
             }
             return array;
         }
-
+        //Descifrar mensaje.
+        public void message_dec(string route, int level, List<byte> list, byte[,] m, byte extra_c)
+        {
+            var n = level - 2;
+            var m_ = (list.Count() + 2 * n + 1) / (2 + 2 * n);
+            var less = m_ - 1;
+            var middle = 2 * (m_ - 1);
+            var position = 0;
+            //Se introducen caracteres superiores.
+            for (int x = 0; x < list.Count(); x++)
+            {
+                if (m[0, x] == Convert.ToByte('_'))
+                {
+                    m[0, x] = list[position];
+                    position++;
+                }
+            }
+            //Se introducen caracteres inferiores.
+            var last = string.Empty;
+            var y = 0;
+            var counter_ = list.Count() - 1;
+            while (y != less)
+            {
+                last = (char)list[counter_] + last;
+                counter_--;
+                y++;
+            }
+            var pos = 0;
+            for (int x = 0; x < list.Count(); x++)
+            {
+                if (m[level - 1, x] == Convert.ToByte('_'))
+                {
+                    m[level - 1, x] = (byte)last[pos];
+                    pos++;
+                }
+            }
+            //Se introducen caracteres del medio.
+            for (int x = 1; x < level - 1; x++)
+            {
+                for (int a = 0; a < list.Count(); a++)
+                {
+                    if ((m[x, a] == Convert.ToByte('_')))
+                    {
+                        m[x, a] = list[position];
+                        position++;
+                    }
+                }
+            }
+            //Se recorre la matriz para mostrar los caracteres.
+            var return_ = false;
+            var z = 0;
+            //var text = string.Empty;
+            byte[] b = new byte[list.Count()];
+            var put = 0;
+            for (int x = 0; x < list.Count(); x++)
+            {
+                if (return_)
+                {
+                    if (m[z, x] != extra_c)
+                    {
+                        b[put] = m[z, x];
+                        put++;
+                    }
+                    z--;
+                    if (z < 0)
+                    {
+                        return_ = false;
+                        z += 2;
+                    }
+                }
+                else
+                {
+                    if (m[z, x] != extra_c)
+                    {
+                        b[put] = m[z, x];
+                        put++;
+                    }
+                    z++;
+                    if (z == level)
+                    {
+                        return_ = true;
+                        z -= 2;
+                    }
+                }
+            }
+            using (var stream = new FileStream(route + "\\..\\Files\\ArchivoDescifradoZigZag.txt", FileMode.Create))
+            {
+                using (var writing = new BinaryWriter(stream))
+                {
+                    writing.Write(b);
+                }
+            }
+        }
     }
 }
