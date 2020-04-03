@@ -157,6 +157,41 @@ namespace ED2_LAB5_4.Codes
                 }
             }
         }
-
+        //Lectura para el descifrado.
+        public List<byte> desncryption(string file, int length, ref byte extra_c)
+        {
+            //Lista para bytes.
+            var list = new List<byte>();
+            using (var stream = new FileStream(file, FileMode.Open))
+            {
+                //Lectura.
+                using (var reading = new BinaryReader(stream))
+                {
+                    //Almacenamiento.
+                    var counter = 0;
+                    var bytes = new byte[length];
+                    while (reading.BaseStream.Position != reading.BaseStream.Length)
+                    {
+                        //Lee los bytes.
+                        bytes = reading.ReadBytes(length);
+                        foreach (byte bit in bytes)
+                        {
+                            bytes = reading.ReadBytes(length);
+                            if (counter != 0)
+                            {
+                                //Agregando a la lista.
+                                list.Add(bit);
+                            }
+                            else
+                            {
+                                extra_c = bit;
+                                counter++;
+                            }
+                        }
+                    }
+                }
+            }
+            return list;
+        }
     }
 }
