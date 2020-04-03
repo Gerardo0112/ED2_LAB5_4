@@ -158,7 +158,7 @@ namespace ED2_LAB5_4.Codes
             }
         }
         //Lectura para el descifrado.
-        public List<byte> desncryption(string file, int length, ref byte extra_c)
+        public List<byte> decryption(string file, int length, ref byte extra_c)
         {
             //Lista para bytes.
             var list = new List<byte>();
@@ -193,5 +193,48 @@ namespace ED2_LAB5_4.Codes
             }
             return list;
         }
+        //Crear matriz descifrado.
+        public byte[,] matrix_dec(int counter, int level, ref int caracter)
+        {
+            caracter = counter;
+            var array = new byte[level, counter];
+            var return_ = false;
+            var x = 0;
+            for (int y = 0; y < counter; y++)
+            {
+                if (return_)
+                {
+                    //Convertir en byte.
+                    array[x, y] = Convert.ToByte('_');
+                    x--;
+                    if (x < 0)
+                    {
+                        return_ = false;
+                        x += 2;
+                    }
+                }
+                else
+                {
+                    array[x, y] = Convert.ToByte('_');
+                    x++;
+                    if (x == level)
+                    {
+                        return_ = true;
+                        x -= 2;
+                    }
+                }
+            }
+            //Si convierte a byte, que devuelva el array.
+            if (array[0, counter - 1] == Convert.ToByte('_'))
+            {
+                return array;
+            }
+            else
+            {
+                array = matrix_dec(counter + 1, level, ref caracter);
+            }
+            return array;
+        }
+
     }
 }
