@@ -138,5 +138,188 @@ namespace ED2_LAB5_4.Codes
             file_encrypted(text_m);
 
         }
+        //Matriz cifrado.
+        public void matrix_encrypted(int value_m, bool direction)
+        {
+            var value_n = this.text.Length / value_m;
+            int counter_text = 0;
+            if (this.text.Length % value_m != 0)
+            {
+                value_n++;
+            }
+
+            char[,] matrix = new char[value_m, value_n];
+            if (direction)
+            {
+                //Llenar matriz horizontalmente.
+                for (int x = 0; x < value_m; x++)
+                {
+                    for (int y = 0; y < value_n; y++)
+                    {
+                        if (counter_text == text.Length)
+                        {
+                            matrix[x, y] = Convert.ToChar(36);
+                        }
+                        else
+                        {
+                            matrix[x, y] = text[counter_text];
+                            counter_text++;
+                        }
+                    }
+                }
+
+                down_path(value_m, value_n, matrix);
+            }
+            else
+            {
+                //Llenar matriz verticalmente.
+                for (int x = 0; x < value_n; x++)
+                {
+                    for (int y = 0; y < value_m; y++)
+                    {
+                        if (counter_text == text.Length)
+                        {
+                            matrix[x, y] = Convert.ToChar(36);
+                        }
+                        else
+                        {
+                            matrix[x, y] = text[counter_text];
+                            counter_text++;
+                        }
+                    }
+                }
+                right_path(value_m, value_n, matrix);
+            }
+        }
+        //Matriz descifrado.
+        public void matrix_decrypted(int value_m, bool direction)
+        {
+            var value_n = this.text.Length / value_m;
+            int counter_text = 0;
+            if (this.text.Length % value_m != 0)
+            {
+                value_n++;
+            }
+            var x = value_m;
+            var y = value_n;
+
+            char[,] matrix = new char[value_m, value_n];
+            if (direction)
+            {
+                int i, aux_m = 0, aux_n = 0;
+                while (aux_m < value_m && aux_n < value_n)
+                {
+                    for (i = aux_m; i < value_m; ++i)
+                    {
+                        matrix[i, aux_n] = text[counter_text];
+                        counter_text++;
+                    }
+                    aux_n++;
+                    for (i = aux_n; i < value_n; ++i)
+                    {
+                        matrix[value_m - 1, i] = text[counter_text];
+                        counter_text++;
+                    }
+                    value_m--;
+                    if (aux_n < value_n)
+                    {
+                        for (i = value_m - 1; i >= aux_m; --i)
+                        {
+                            matrix[i, value_n - 1] = text[counter_text];
+                            counter_text++;
+                        }
+                        value_n--;
+                    }
+                    if (aux_m < value_m)
+                    {
+                        for (i = value_n - 1; i >= aux_n; --i)
+                        {
+                            matrix[aux_m, i] = text[counter_text];
+                            counter_text++;
+                        }
+                        aux_m++;
+                    }
+                }
+                var text_dec = string.Empty;
+                for (int p = 0; p < x; p++)
+                {
+                    for (int j = 0; j < y; j++)
+                    {
+                        if (matrix[p, j] != 36)
+                        {
+                            text_dec += matrix[p, j];
+
+                        }
+                    }
+                }
+                file_decrypted(text_dec);
+            }
+            else
+            {
+                //Recorrer matriz en espiral.
+                int i, aux_m = 0, aux_n = 0;
+                while (aux_m < value_m && aux_n < value_n)
+                {
+                    for (i = aux_n; i < value_n; ++i)
+                    {
+                        matrix[aux_m, i] = text[counter_text];
+                        counter_text++;
+                    }
+                    aux_m++;
+                    for (i = aux_m; i < value_m; ++i)
+                    {
+                        matrix[i, value_n - 1] = text[counter_text];
+                        counter_text++;
+                    }
+                    value_n--;
+                    if (aux_m < value_m)
+                    {
+                        for (i = value_n - 1; i >= aux_n; --i)
+                        {
+                            matrix[value_m - 1, i] = text[counter_text];
+                            counter_text++; ;
+                        }
+                        value_m--;
+                    }
+                    if (aux_n < value_n)
+                    {
+                        for (i = value_m - 1; i >= aux_m; --i)
+                        {
+                            matrix[i, aux_n] = text[counter_text];
+                            counter_text++;
+                        }
+                        aux_n++;
+                    }
+                }
+                var text_deci = string.Empty;
+                for (int p = 0; p < y; p++)
+                {
+                    for (int j = 0; j < x; j++)
+                    {
+                        if (matrix[j, p] != 36)
+                        {
+                            text_deci += matrix[j, p];
+
+                        }
+                    }
+                }
+                file_decrypted(text_deci);
+            }
+        }
+        //Cifrar mensaje.
+        public void message(string route_a, string file, int m, bool direction)
+        {
+            route = route_a;
+            lecture(file);
+            matrix_encrypted(m, direction);
+            file_encrypted(text_m);
+        }
+        //Descifrar mensaje.
+        public void message_d(string route_a, string file, int m, bool direction)
+        {
+            route = route_a;
+            lecture(file);
+            matrix_decrypted(m, direction);
+        }
     }
 }
